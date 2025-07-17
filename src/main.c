@@ -175,7 +175,7 @@ void* F_join_2_string(void* arg) {//prints two user input string together
     pthread_exit(NULL);
 }
 
-void start_join_2_string() { // helper function to run F_Arithmetic in a thread
+void helper_join_2_string() { // helper function to run F_Arithmetic in a thread
     pthread_t join_2_string; // thread handle
     pthread_create(&join_2_string, NULL, F_join_2_string, NULL); // use F_Arithmetic as the thread function
     pthread_join(join_2_string, NULL); // wait for thread to finish
@@ -206,7 +206,7 @@ int main(void) {
         } else if (strcmp(str, operations[4]) == 0) {
             helper_special(2);
         } else if (strcmp(str, operations[5]) == 0) {
-            start_join_2_string();
+            helper_join_2_string();
         } else if (strcmp(str, operations[6]) == 0) {
             print_log();
             return 0;
