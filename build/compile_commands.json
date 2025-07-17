@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/sam/projects/lab5_prelab/build",
+  "command": "/usr/bin/cc  -I/home/sam/projects/lab5_prelab/include -g -o CMakeFiles/run.dir/src/main.c.o -c /home/sam/projects/lab5_prelab/src/main.c",
+  "file": "/home/sam/projects/lab5_prelab/src/main.c",
+  "output": "CMakeFiles/run.dir/src/main.c.o"
+}
+]

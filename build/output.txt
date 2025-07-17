@@ -1,0 +1,7 @@
+Time: 2025-07-17 15:07:13 Type: O Data: Chose operation:
+Time: 2025-07-17 15:07:16 Type: I Data: add
+Time: 2025-07-17 15:07:17 Type: I Data: 1
+Time: 2025-07-17 15:07:17 Type: I Data: 3
+Time: 2025-07-17 15:07:17 Type: O Data: The result is: 4
+Time: 2025-07-17 15:07:17 Type: O Data: Chose operation:
+Time: 2025-07-17 15:07:19 Type: I Data: end
