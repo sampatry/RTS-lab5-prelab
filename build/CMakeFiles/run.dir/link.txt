@@ -1,1 +1,1 @@
-/usr/bin/cc CMakeFiles/run.dir/src/main.c.o -o run 
+/usr/bin/cc -g CMakeFiles/run.dir/src/main.c.o -o run 

@@ -21,7 +21,12 @@ char operations[7][20] = {
 typedef struct {
     char type;
     char text[50];
-} LogData;
+} LogData_string;
+
+typedef struct {
+    char type;
+    int num;
+} LogData_int;
 
 typedef struct{
     char type;
