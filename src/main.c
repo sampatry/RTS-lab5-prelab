@@ -1,29 +1,35 @@
 #include "header.h" //side note: double quotes tells the compiler to check local folder for header
 #include <pthread.h>
 
-//creates a user to log inputs/outpus (global)
+//mutex creation for logging of user1
+pthread_mutex_t user_log_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 user_log user1[50];
-int user1_index = 0; //starts at begining
+int user1_index = 0;
 
 void log_time(void){ //adds time to user1 log at current index
     time_t now = time(NULL);
-    struct tm *lt = localtime(&now); //formats now to human readable time
-    strftime(user1[user1_index].time, sizeof(user1[user1_index].time), "%Y-%m-%d %H:%M:%S", lt); //copies human readable string to user log
+    struct tm *lt = localtime(&now);
+    strftime(user1[user1_index].time, sizeof(user1[user1_index].time), "%Y-%m-%d %H:%M:%S", lt);
 }
  
-void* log_integer(void* arg) { //stores integer input into the log (converts from int>string)
+void* log_integer(void* arg) {
     LogData_int* data = (LogData_int*) arg;
-    user1[user1_index].type = data->type; //adds type of data to log (in or out)
-    char str[50];//string that will take converted integer
-    snprintf(str, sizeof(str), "%d", data->num); //converts the int to string
-    strncpy(user1[user1_index].text, str, sizeof(user1[user1_index].text) - 1); //copies data from function input argument into log
-    log_time(); //logs the time of action
-    user1_index += 1; //increments index
-    if (user1_index >= 50) user1_index = 0; //rolls over back to start at the end of array
+    pthread_mutex_lock(&user_log_mutex);  //prevents other threads from writing
+    user1[user1_index].type = data->type;
+    char str[50];
+    snprintf(str, sizeof(str), "%d", data->num);
+    strncpy(user1[user1_index].text, str, sizeof(user1[user1_index].text) - 1);
+    log_time();
+    user1_index += 1;
+    pthread_mutex_unlock(&user_log_mutex);  //unlocks other threads once writing is done
+    if (user1_index >= 50) user1_index = 0;
+    free(data);
+    pthread_exit(NULL);
 }
 
 void helper_log_integer(char type, int x) { //helper function for thread handling
-    pthread_t log_int_thread; //thread handle
+    pthread_t log_int_thread;
     LogData_int* data = malloc(sizeof(LogData_int)); //allocates memory for data
     data->type = type;
     data->num = x;
@@ -33,14 +39,17 @@ void helper_log_integer(char type, int x) { //helper function for thread handlin
 
 void* log_string(void* arg) {
     LogData_string* data = (LogData_string*) arg;
+    pthread_mutex_lock(&user_log_mutex);  //prevents other threads from writing
     user1[user1_index].type = data->type;
     strncpy(user1[user1_index].text, data->text, sizeof(user1[user1_index].text) - 1);
     user1[user1_index].text[sizeof(user1[user1_index].text) - 1] = '\0';
     log_time();
     user1_index = (user1_index + 1) % 50;
+    pthread_mutex_unlock(&user_log_mutex);  //unlocks other threads once writing is done
     free(data);
     pthread_exit(NULL);
 }
+
 
 void helper_log_string(char type, const char *text) { //helper function for thread handling
     pthread_t log_string_thread; //thread handle
@@ -54,12 +63,12 @@ void helper_log_string(char type, const char *text) { //helper function for thre
 }
 
 void print_log(void){ //prints the log into a text file and terminal
-    FILE *fp; //initializes file opperation fp
+    FILE *fp;
     fp = fopen("output.txt", "w"); //opens file in write mode "w"
     for (int i =0; i < 50; i++){ //writes entire log to file
         printf("Time: %s Type: %c Data: %s\n", user1[i].time, user1[i].type, user1[i].text);
         fprintf(fp, "Time: %s Type: %c Data: %s\n", user1[i].time, user1[i].type, user1[i].text);
-        if (user1[i+1].type == '\0') i = 50; //stops writing when data ends (next type is empty)
+        if (user1[i+1].type == '\0') i = 50;
     }
     fclose(fp); //closes file
 }
@@ -74,8 +83,8 @@ int input_int(void) {//handles integer inputs
         helper_log_string('O', "Invalid operation.");
         return input_int(); //tries again
     }
-    while (getchar() != '\n'); //clears user input
-    helper_log_integer('I', a); //stores the record of input
+    while (getchar() != '\n');
+    helper_log_integer('I', a);
     return a;
 }
 
@@ -89,21 +98,22 @@ char* input_string(void) { //handles string inputs
     return strdup(str); 
 } 
 
-void* F_Arithmetic(void* arg) { //function for add,subtract and multiply operations
+void* F_Arithmetic(void* arg) { //function for add (1), subtract (2) and multiply (3) operations
     int x = *(int*) arg;
     int result;
-    if (x == 1){ //1 for addition
+    if (x == 1){
         result = input_int() + input_int();
-    } else if (x == 2){ //2 for subtraction
+    } else if (x == 2){
         result = input_int() - input_int();
-    } else if (x == 3){ //3 for multiplication
+    } else if (x == 3){
         result = input_int() * input_int();
     }
     char str_out[50]; //char arary for output and log
     snprintf(str_out, sizeof(str_out), "The result is: %d", result); //makes the output with result as pure string
-    printf("%s", str_out); //outputs pure string to user
-    helper_log_string('O', str_out); //logs pure string
+    printf("%s", str_out);
+    helper_log_string('O', str_out);
     free(arg); //release arg's memory
+    pthread_exit(NULL);
 }
 
 void helper_Arithmetic(int x) { // helper function to run F_Arithmetic in a thread
@@ -142,6 +152,8 @@ void* F_special(void* arg) { //handles triangle number and factorial operation
     snprintf(str_out, sizeof(str_out), "The result is: %ld", result); //makes the output with result as pure string
     printf("%s", str_out); //outputs pure string to user
     helper_log_string('O', str_out); //logs pure string
+    free(arg); //release arg's memory
+    pthread_exit(NULL);
 }
 
 void helper_special(int x) { // helper function to run F_Arithmetic in a thread
@@ -160,6 +172,7 @@ void* F_join_2_string(void* arg) {//prints two user input string together
     snprintf(str_out, sizeof(str_out), "Here is what you entered: %s %s", str1, str2); //converts string with result to pure string
     printf("%s", str_out); //outputs pure string to user
     helper_log_string('O', str_out); //logs pure string
+    pthread_exit(NULL);
 }
 
 void start_join_2_string() { // helper function to run F_Arithmetic in a thread
@@ -168,12 +181,11 @@ void start_join_2_string() { // helper function to run F_Arithmetic in a thread
     pthread_join(join_2_string, NULL); // wait for thread to finish
 }
 
-int main(void) { //main loop of program 
-
-    pthread_t Arithmetic;
+int main(void) {
 
     while(1){
-
+        
+        printf("\nLab 5 Prelab\n");
         printf("\nHere are the available operations:\n");
         helper_log_string('O', "Chose operation:");
 
@@ -181,11 +193,10 @@ int main(void) { //main loop of program
             printf("- %s\n", operations[i]);
         }
 
-        //Gets input from user
         char *str = input_string(); //this functions returns a pointer to the string from the user
 
         if (strcmp(str, operations[0]) == 0) { //strcmp returns 0 if strings are equal
-            helper_Arithmetic(1); //calls add function
+            helper_Arithmetic(1);
         } else if (strcmp(str, operations[1]) == 0) {
             helper_Arithmetic(2);
         } else if (strcmp(str, operations[2]) == 0) {
