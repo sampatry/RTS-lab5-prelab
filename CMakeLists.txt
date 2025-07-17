@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(MyCProject C)
+project(run C)
 
 include_directories(include)
 
-add_executable(MyCProject src/main.c)
+add_executable(run src/main.c)

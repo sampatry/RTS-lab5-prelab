@@ -33,9 +33,9 @@ void* log_string(void* arg) {
 }
 
 void start_log_thread(char type, const char *text) { //helper function for thread handling
-    pthread_t log_thread; //
-    LogData *data = malloc(sizeof(LogData));
-    if (!data) return;
+    pthread_t log_thread; //thread handle
+    LogData *data = malloc(sizeof(LogData)); //allocates memory for data
+    if (!data) return; //ensures the data pointer isnt null before continuing
     data->type = type;
     strncpy(data->text, text, sizeof(data->text) - 1);
     data->text[sizeof(data->text) - 1] = '\0';
@@ -58,8 +58,8 @@ void print_log(void){ //prints the log into a text file and terminal
 int input_int(void) {//handles integer inputs
     int a;
     printf("Enter number: ");
-    //When the scanf function successfully reads a correct input it adds 1 to what it returns
-    if (scanf("%d", &a) != 1) { //info about scanf(): https://www.ibm.com/docs/en/i/7.4.0?topic=functions-scanf-read-data
+    
+    if (scanf("%d", &a) != 1) {
         printf("Invalid Input!\n");
        while (getchar() != '\n'); //clears user input 
         start_log_thread('O', "Invalid operation.");
@@ -72,15 +72,39 @@ int input_int(void) {//handles integer inputs
 
 
 char* input_string(void) { //handles string inputs
-    char str[50]; //creates char array for input from user
+    char str[50];
     printf("Enter a string(%ld charaters max): ",sizeof(str));
     if (fgets(str, sizeof(str), stdin) == NULL) return NULL; //retrns NULL if an error occurs
-    str[strcspn(str, "\n")] = '\0'; //replaces \n in array to null, strcspn() returns location of char in array its looking for. https://www.geeksforgeeks.org/strcspn-in-c/
-    start_log_thread('I', str); //stores the record of the input
-    return strdup(str);  //returns a pointer to a copy of string str, https://www.geeksforgeeks.org/strdup-strdndup-functions-c/
+    str[strcspn(str, "\n")] = '\0';
+    start_log_thread('I', str);
+    return strdup(str); 
 } 
 
-void F_Arithmetic(int x) { //function for add,subtract and multiply operations
+// void F_Arithmetic(int x) { //function for add,subtract and multiply operations
+//     int result;
+//     if (x == 1){ //1 for addition
+//         result = input_int() + input_int();
+//     } else if (x == 2){ //2 for subtraction
+//         result = input_int() - input_int();
+//     } else if (x == 3){ //3 for multiplication
+//         result = input_int() * input_int();
+//     }
+//     char str_out[50]; //char arary for output and log
+//     snprintf(str_out, sizeof(str_out), "The result is: %d", result); //makes the output with result as pure string
+//     printf("%s", str_out); //outputs pure string to user
+//     start_log_thread('O', str_out); //logs pure string
+// }
+
+void start_Arithmetic(int x) { //helper function for thread handling
+    pthread_t Arithmetic; //thread handle
+    int *type = malloc(sizeof(int)); //allocates memory for type of calculation
+    *type = x;
+    pthread_create(&Arithmetic, NULL, log_string, type);
+    pthread_join(Arithmetic, NULL);
+}
+
+void* F_Arithmetic(void* arg) { //function for add,subtract and multiply operations
+    int x = *(int*) arg;
     int result;
     if (x == 1){ //1 for addition
         result = input_int() + input_int();
@@ -134,7 +158,7 @@ int F_join_2_string(void) {//prints two user input string together
 
 int main(void) { //main loop of program 
 
-    pthread_t thread1, thread2;
+    pthread_t Arithmetic;
 
     while(1){
 
@@ -149,11 +173,11 @@ int main(void) { //main loop of program
         char *str = input_string(); //this functions returns a pointer to the string from the user
 
         if (strcmp(str, operations[0]) == 0) { //strcmp returns 0 if strings are equal
-            F_Arithmetic(1); //calls add function
+            start_Arithmetic(1); //calls add function
         } else if (strcmp(str, operations[1]) == 0) {
-            F_Arithmetic(2);
+            start_Arithmetic(2);
         } else if (strcmp(str, operations[2]) == 0) {
-            F_Arithmetic(3);
+            start_Arithmetic(3);
         } else if (strcmp(str, operations[3]) == 0) {
             F_special(1);
         } else if (strcmp(str, operations[4]) == 0) {
