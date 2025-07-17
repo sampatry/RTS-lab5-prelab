@@ -1,4 +1,4 @@
-CMakeFiles/MyCProject.dir/src/main.c.o: \
+CMakeFiles/run.dir/src/main.c.o: \
  /home/sam/projects/lab5_prelab/src/main.c /usr/include/stdc-predef.h \
  /home/sam/projects/lab5_prelab/include/header.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \

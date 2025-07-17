@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /home/sam/projects/lab5_prelab/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/MyCProject.dir/all
+all: CMakeFiles/run.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -71,34 +71,34 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/MyCProject.dir/clean
+clean: CMakeFiles/run.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/MyCProject.dir
+# Target rules for target CMakeFiles/run.dir
 
 # All Build rule for target.
-CMakeFiles/MyCProject.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyCProject.dir/build.make CMakeFiles/MyCProject.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyCProject.dir/build.make CMakeFiles/MyCProject.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/sam/projects/lab5_prelab/build/CMakeFiles --progress-num=1,2 "Built target MyCProject"
-.PHONY : CMakeFiles/MyCProject.dir/all
+CMakeFiles/run.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/sam/projects/lab5_prelab/build/CMakeFiles --progress-num=1,2 "Built target run"
+.PHONY : CMakeFiles/run.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/MyCProject.dir/rule: cmake_check_build_system
+CMakeFiles/run.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/projects/lab5_prelab/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/MyCProject.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/run.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/projects/lab5_prelab/build/CMakeFiles 0
-.PHONY : CMakeFiles/MyCProject.dir/rule
+.PHONY : CMakeFiles/run.dir/rule
 
 # Convenience name for target.
-MyCProject: CMakeFiles/MyCProject.dir/rule
-.PHONY : MyCProject
+run: CMakeFiles/run.dir/rule
+.PHONY : run
 
 # clean rule for target.
-CMakeFiles/MyCProject.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MyCProject.dir/build.make CMakeFiles/MyCProject.dir/clean
-.PHONY : CMakeFiles/MyCProject.dir/clean
+CMakeFiles/run.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/clean
+.PHONY : CMakeFiles/run.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

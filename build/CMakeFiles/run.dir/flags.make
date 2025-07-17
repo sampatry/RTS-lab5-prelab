@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/home/sam/projects/lab5_prelab/include
 
-C_FLAGS = -g
+C_FLAGS = 
 
